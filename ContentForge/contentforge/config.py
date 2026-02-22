@@ -47,7 +47,7 @@ def load_config() -> dict:
     _load_dotenv()
 
     config = {
-        "postiz": {"base_url": "", "api_key": ""},
+        "postiz": {"mcp_url": "", "api_key": ""},
         "openai": {"api_key": ""},
         "dalle": {"model": "dall-e-3", "size": "1024x1024"},
     }
@@ -59,7 +59,7 @@ def load_config() -> dict:
 
     # Env vars nadpisują YAML
     env_overrides = {
-        "POSTIZ_BASE_URL": ("postiz", "base_url"),
+        "POSTIZ_MCP_URL": ("postiz", "mcp_url"),
         "POSTIZ_API_KEY": ("postiz", "api_key"),
         "OPENAI_API_KEY": ("openai", "api_key"),
     }

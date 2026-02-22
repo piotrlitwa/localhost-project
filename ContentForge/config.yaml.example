@@ -1,6 +1,6 @@
 postiz:
-  base_url: "https://twoja-instancja/public/v1"
-  api_key: "klucz-api"
+  mcp_url: "https://twoja-instancja/api/mcp/twoj-klucz-api"
+  api_key: "twoj-klucz-api"
 
 openai:
   api_key: "klucz-openai"

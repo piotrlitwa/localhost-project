@@ -34,7 +34,7 @@ from .models import (
     PublishRecord,
     PublishType,
 )
-from .publishing.postiz import PostizClient
+from .publishing.postiz import PostizMCPClient
 from .publishing.scheduler import parse_schedule_date, suggest_times
 from .utils.web_search import build_trend_queries
 
@@ -363,11 +363,11 @@ class ContentForgeCLI:
     # === Publikacja ===
 
     def _publish_flow(self):
-        console.print(Panel("[bold]Publikacja treści przez Postiz[/bold]", border_style="yellow"))
+        console.print(Panel("[bold]Publikacja treści przez Postiz (MCP)[/bold]", border_style="yellow"))
 
-        postiz = PostizClient(config=self.config, db=self.db)
+        postiz = PostizMCPClient(config=self.config, db=self.db)
         if not postiz.is_configured():
-            console.print("[red]Postiz nie jest skonfigurowany. Sprawdź config.yaml lub zmienne środowiskowe.[/red]")
+            console.print("[red]Postiz nie jest skonfigurowany. Sprawdź .env (POSTIZ_MCP_URL, POSTIZ_API_KEY).[/red]")
             return
 
         # Pokaż zatwierdzone treści gotowe do publikacji
@@ -402,7 +402,7 @@ class ContentForgeCLI:
             return
 
         if not integrations:
-            console.print("[yellow]Brak integracji w Postiz.[/yellow]")
+            console.print("[yellow]Brak integracji w Postiz. Dodaj kanały w panelu Postiz.[/yellow]")
             return
 
         # Wybierz integrację
@@ -416,6 +416,43 @@ class ContentForgeCLI:
             console.print("[red]Nieprawidłowy wybór.[/red]")
             return
         selected_integ = integrations[integ_idx - 1]
+
+        # Pobierz schemat integracji (wymagane settings)
+        integration_settings = []
+        try:
+            schema = postiz.get_integration_schema(selected_integ.provider)
+            console.print(f"\n[dim]Schemat integracji pobrany dla {selected_integ.provider}[/dim]")
+
+            # Jeśli schemat wymaga settings, wyświetl je
+            schema_settings = schema.get("settings", [])
+            if schema_settings:
+                console.print("\n[bold]Ustawienia integracji:[/bold]")
+                for setting in schema_settings:
+                    s_key = setting.get("key", setting.get("name", ""))
+                    s_desc = setting.get("description", s_key)
+                    s_required = setting.get("required", False)
+                    s_options = setting.get("options", [])
+
+                    if s_options:
+                        console.print(f"\n  {s_desc}:")
+                        for j, opt in enumerate(s_options, 1):
+                            opt_label = opt.get("label", opt.get("name", str(opt)))
+                            opt_value = opt.get("value", opt.get("id", opt_label))
+                            console.print(f"    {j}. {opt_label}")
+
+                        if s_required:
+                            opt_idx = IntPrompt.ask(f"  Wybierz (1-{len(s_options)})", default=1)
+                            chosen = s_options[min(opt_idx, len(s_options)) - 1]
+                            integration_settings.append({
+                                "key": s_key,
+                                "value": chosen.get("value", chosen.get("id", chosen.get("label", ""))),
+                            })
+                    elif s_required:
+                        value = Prompt.ask(f"  {s_desc}")
+                        if value:
+                            integration_settings.append({"key": s_key, "value": value})
+        except Exception as e:
+            console.print(f"[dim]Nie udało się pobrać schematu: {e}[/dim]")
 
         # Typ publikacji
         console.print("\n[bold]Typ publikacji:[/bold]")
@@ -432,38 +469,44 @@ class ContentForgeCLI:
 
         scheduled_at = None
         if publish_type == PublishType.SCHEDULE:
-            # Sugestie optymalnych godzin
             suggestions = suggest_times(content.platform)
             if suggestions:
                 console.print("\n[bold]Sugerowane terminy:[/bold]")
                 for i, (dt, label) in enumerate(suggestions, 1):
                     console.print(f"  {i}. {label}")
 
-            date_str = Prompt.ask("\nPodaj datę i godzinę (np. 'jutro 10:00', '2025-01-15 14:00')")
+            date_str = Prompt.ask("\nPodaj datę i godzinę (np. 'jutro 10:00', '2026-03-15 14:00')")
             scheduled_at = parse_schedule_date(date_str)
             if not scheduled_at:
                 console.print("[red]Nie udało się sparsować daty.[/red]")
                 return
             console.print(f"[dim]Zaplanowano na: {scheduled_at.strftime('%Y-%m-%d %H:%M')}[/dim]")
 
-        # Upload obrazu jeśli jest
+        # Obrazy — sprawdź lokalne + opcja generowania przez Postiz
+        image_urls = []
         images = self.db.get_images_for_session(content.session_id)
-        image_ids = []
         if images:
             console.print(f"\n[bold]Znaleziono {len(images)} obraz(y/ów) dla tej sesji.[/bold]")
-            if Confirm.ask("Dołączyć obraz do posta?", default=True):
-                for img in images:
-                    if img.postiz_id:
-                        image_ids.append(img.postiz_id)
-                        console.print(f"[dim]Obraz #{img.id} już uploadowany (ID: {img.postiz_id})[/dim]")
+            for img in images:
+                if img.postiz_path:
+                    image_urls.append(img.postiz_path)
+                    console.print(f"  [dim]Obraz #{img.id} — {img.postiz_path}[/dim]")
+                else:
+                    console.print(f"  [dim]Obraz #{img.id} — {img.file_path} (lokalny)[/dim]")
+
+        if not image_urls:
+            if Confirm.ask("\nWygenerować obraz przez Postiz AI?", default=False):
+                prompt = Prompt.ask("Prompt dla obrazu", default=f"Professional illustration for: {content.title}")
+                try:
+                    img_result = postiz.generate_image(prompt)
+                    img_url = img_result.get("url", img_result.get("path", ""))
+                    if img_url:
+                        image_urls.append(img_url)
+                        console.print(f"[green]Obraz wygenerowany: {img_url}[/green]")
                     else:
-                        try:
-                            result = postiz.upload_image(img.file_path)
-                            self.db.update_image_postiz(img.id, result["id"], result["path"])
-                            image_ids.append(result["id"])
-                            console.print(f"[green]Uploadowano obraz #{img.id}[/green]")
-                        except Exception as e:
-                            console.print(f"[red]Błąd uploadu: {e}[/red]")
+                        console.print(f"[dim]Wynik: {img_result}[/dim]")
+                except Exception as e:
+                    console.print(f"[red]Błąd generowania obrazu: {e}[/red]")
 
         # Potwierdzenie
         console.print(f"\n[bold]Podsumowanie:[/bold]")
@@ -472,23 +515,23 @@ class ContentForgeCLI:
         console.print(f"  Typ: {publish_type.value}")
         if scheduled_at:
             console.print(f"  Zaplanowano: {scheduled_at.strftime('%Y-%m-%d %H:%M')}")
-        if image_ids:
-            console.print(f"  Obrazy: {len(image_ids)}")
+        if image_urls:
+            console.print(f"  Obrazy: {len(image_urls)}")
         console.print(f"  Pozostałe żądania: {postiz.remaining_requests}/30")
 
         if not Confirm.ask("\nOpublikować?", default=True):
             console.print("[dim]Anulowano.[/dim]")
             return
 
-        # Publikacja
+        # Publikacja przez MCP
         try:
             result = postiz.create_post(
                 content=content.body,
-                integration_ids=[selected_integ.id],
+                integration_id=selected_integ.id,
                 publish_type=publish_type,
                 scheduled_at=scheduled_at,
-                image_ids=image_ids if image_ids else None,
-                title=content.title,
+                image_urls=image_urls if image_urls else None,
+                settings=integration_settings if integration_settings else None,
             )
 
             record = PublishRecord(
@@ -498,7 +541,7 @@ class ContentForgeCLI:
                 publish_type=publish_type,
                 scheduled_at=scheduled_at,
                 status="success",
-                response_data=json.dumps(result, ensure_ascii=False),
+                response_data=json.dumps(result, ensure_ascii=False) if isinstance(result, dict) else str(result),
             )
             self.db.save_publish(record)
             self.db.update_content_status(content.id, ContentStatus.PUBLISHED)
