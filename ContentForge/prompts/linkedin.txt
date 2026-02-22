@@ -1,0 +1,20 @@
+Sformatuj poniższy brief jako post na LinkedIn/Facebook.
+
+Brief:
+{brief}
+
+Wymagania formatu LinkedIn/Facebook:
+1. Długość: 1300-2000 znaków (ze spacjami).
+2. Zacznij od HOOKA — pierwsze 2 linijki muszą zatrzymać scrollowanie.
+3. Użyj krótkich akapitów (1-3 zdania), oddzielonych pustą linią.
+4. Dodaj 2-3 emoji na początku kluczowych akapitów (nie przesadzaj).
+5. Zakończ mocnym CTA (pytanie do odbiorców lub zachęta do działania).
+6. Na końcu dodaj 3-5 hashtagów (po polsku lub uniwersalnych).
+7. Unikaj linków w treści (algorytm obcina zasięg).
+8. Ton: profesjonalny, ale personalny — pisz jakbyś dzielił się doświadczeniem.
+
+Odpowiedz w formacie:
+TITLE: [krótki tytuł do bazy danych]
+HASHTAGS: [hashtagi oddzielone spacjami]
+CONTENT:
+[pełna treść posta]

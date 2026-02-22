@@ -1,0 +1,23 @@
+Na podstawie podanego tematu stwórz kreatywny brief treściowy.
+
+Temat: {topic}
+
+Zadanie (masz większą swobodę kreatywną):
+1. Zinterpretuj temat szeroko — znajdź ciekawy, nietypowy kąt podejścia.
+2. Określ grupę docelową, która najbardziej skorzysta z tej treści.
+3. Sformułuj 3-5 kluczowych punktów, łącząc wiedzę ekspercką z przystępnym przekazem.
+4. Zaproponuj oryginalny kąt podejścia, który zaskoczy czytelnika.
+5. Dodaj element storytellingu lub analogii, który uczyni treść zapamiętywalną.
+6. Wskaż potencjalne CTA.
+
+Odpowiedz w formacie:
+TEMAT: [główny temat z twistem]
+GRUPA DOCELOWA: [opis odbiorcy]
+KĄT: [oryginalne podejście]
+STORYTELLING: [element narracyjny lub analogia]
+PUNKTY KLUCZOWE:
+- [punkt 1]
+- [punkt 2]
+- [punkt 3]
+CTA: [wezwanie do działania]
+BRIEF: [krótki opis treści do stworzenia, 2-3 zdania]

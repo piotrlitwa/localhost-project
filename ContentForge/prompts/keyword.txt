@@ -1,0 +1,21 @@
+Na podstawie podanego słowa kluczowego stwórz brief treściowy.
+
+Słowo kluczowe: {keyword}
+
+Zadanie:
+1. Zidentyfikuj główny temat i kontekst słowa kluczowego.
+2. Określ grupę docelową, która szuka tego tematu.
+3. Sformułuj 3-5 kluczowych punktów do omówienia.
+4. Zaproponuj kąt podejścia (edukacyjny, inspirujący, praktyczny, analityczny).
+5. Wskaż potencjalne CTA (wezwanie do działania).
+
+Odpowiedz w formacie:
+TEMAT: [główny temat]
+GRUPA DOCELOWA: [opis odbiorcy]
+KĄT: [podejście]
+PUNKTY KLUCZOWE:
+- [punkt 1]
+- [punkt 2]
+- [punkt 3]
+CTA: [wezwanie do działania]
+BRIEF: [krótki opis treści do stworzenia, 2-3 zdania]

@@ -1,0 +1,24 @@
+Na podstawie znalezionego trendu stwórz brief treściowy.
+
+Nisza: {niche}
+Znaleziony trend: {trend}
+
+Zadanie:
+1. Przeanalizuj trend w kontekście podanej niszy.
+2. Określ, dlaczego ten trend jest istotny teraz.
+3. Zidentyfikuj grupę docelową zainteresowaną tym trendem.
+4. Sformułuj 3-5 kluczowych punktów łączących trend z niszą.
+5. Zaproponuj unikalny kąt podejścia, który wyróżni treść.
+6. Wskaż potencjalne CTA.
+
+Odpowiedz w formacie:
+TEMAT: [główny temat łączący trend z niszą]
+TREND: [dlaczego jest aktualny]
+GRUPA DOCELOWA: [opis odbiorcy]
+KĄT: [podejście]
+PUNKTY KLUCZOWE:
+- [punkt 1]
+- [punkt 2]
+- [punkt 3]
+CTA: [wezwanie do działania]
+BRIEF: [krótki opis treści do stworzenia, 2-3 zdania]

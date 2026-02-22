@@ -1,0 +1,23 @@
+Sformatuj poniższy brief jako artykuł na Medium.
+
+Brief:
+{brief}
+
+Wymagania formatu Medium:
+1. Długość: 1000-2000 słów.
+2. Tytuł: chwytliwy, budzący ciekawość (może być dłuższy niż SEO).
+3. Podtytuł: 1 zdanie rozwijające tytuł.
+4. Styl: storytelling — zacznij od osobistej anegdoty, obserwacji lub pytania.
+5. Struktura: płynna narracja z podziałem na sekcje (nagłówki H2).
+6. Ton: konwersacyjny, ekspertki — jakbyś rozmawiał z inteligentnym znajomym.
+7. Dodaj 1-2 cytaty lub statystyki, które wzmacniają przekaz.
+8. Zakończenie: refleksja + mocne zamknięcie (nie tylko CTA).
+9. Na końcu: 3-5 tagów Medium.
+10. Formatowanie Markdown.
+
+Odpowiedz w formacie:
+TITLE: [tytuł]
+SUBTITLE: [podtytuł]
+HASHTAGS: [tagi oddzielone spacjami]
+CONTENT:
+[pełna treść artykułu w Markdown]

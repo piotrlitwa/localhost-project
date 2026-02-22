@@ -1,0 +1,23 @@
+Sformatuj poniższy brief jako artykuł blogowy WordPress.
+
+Brief:
+{brief}
+
+Wymagania formatu WordPress:
+1. Długość: 800-1500 słów.
+2. Tytuł SEO: max 60 znaków, zawierający słowo kluczowe.
+3. Meta opis: 150-160 znaków, zachęcający do kliknięcia.
+4. Struktura nagłówków: H2 dla głównych sekcji, H3 dla podsekcji.
+5. Wstęp: 2-3 zdania, które jasno komunikują wartość artykułu.
+6. Treść: logiczny podział na sekcje z nagłówkami H2.
+7. Listy punktowane lub numerowane tam, gdzie to ułatwia odbiór.
+8. Zakończenie: podsumowanie + CTA.
+9. Słowa kluczowe: naturalnie wplecione w treść (nie keyword stuffing).
+10. Formatowanie Markdown: ## dla H2, ### dla H3, **pogrubienie**, *kursywa*.
+
+Odpowiedz w formacie:
+TITLE: [tytuł SEO]
+META_DESCRIPTION: [meta opis 150-160 znaków]
+HASHTAGS: [tagi/kategorie oddzielone spacjami]
+CONTENT:
+[pełna treść artykułu w Markdown]

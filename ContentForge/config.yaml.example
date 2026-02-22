@@ -1,0 +1,10 @@
+postiz:
+  base_url: "https://twoja-instancja/public/v1"
+  api_key: "klucz-api"
+
+openai:
+  api_key: "klucz-openai"
+
+dalle:
+  model: "dall-e-3"
+  size: "1024x1024"

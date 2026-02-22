@@ -1,0 +1,31 @@
+Sformatuj poniższy brief jako treść na X/Twitter.
+
+Brief:
+{brief}
+
+Stwórz DWA warianty:
+
+WARIANT A — Pojedynczy tweet (280 znaków max):
+- Skondensuj kluczowy przekaz do jednego tweeta.
+- Użyj mocnego, zwięzłego języka.
+- Dodaj 1-2 hashtagi (wliczone w limit znaków).
+
+WARIANT B — Wątek (3-7 tweetów):
+- Tweet 1: Hook — mocne otwarcie, które zachęca do czytania dalej (dodaj "🧵" na końcu).
+- Tweety 2-6: Rozwinięcie kluczowych punktów, każdy max 280 znaków.
+- Ostatni tweet: Podsumowanie + CTA + hashtagi.
+- Każdy tweet powinien mieć sens sam w sobie.
+- Numeruj tweety: 1/, 2/, 3/ itd.
+
+Odpowiedz w formacie:
+TITLE: [krótki tytuł do bazy danych]
+HASHTAGS: [hashtagi oddzielone spacjami]
+CONTENT:
+--- POJEDYNCZY TWEET ---
+[tweet 280 znaków]
+
+--- WĄTEK ---
+[tweet 1/]
+[tweet 2/]
+[tweet 3/]
+...
