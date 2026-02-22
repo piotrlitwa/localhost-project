@@ -10,6 +10,7 @@ data/images/
 
 # Config with secrets
 config.yaml
+.env
 
 # IDE
 .vscode/
