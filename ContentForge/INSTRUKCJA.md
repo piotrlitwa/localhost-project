@@ -4,37 +4,18 @@
 
 ### Klucze API
 
-```bash
-cd ContentForge
-cp config.yaml.example config.yaml
+Uzupełnij plik `.env` w katalogu ContentForge:
+
 ```
-
-Uzupełnij `config.yaml`:
-
-```yaml
-postiz:
-  base_url: "https://twoja-instancja/public/v1"
-  api_key: "twoj-klucz-postiz"
-
-openai:
-  api_key: "twoj-klucz-openai"    # opcjonalnie, do obrazów DALL-E
-
-dalle:
-  model: "dall-e-3"
-  size: "1024x1024"
-```
-
-Alternatywnie ustaw zmienne środowiskowe:
-
-```bash
-export POSTIZ_BASE_URL="https://twoja-instancja/public/v1"
-export POSTIZ_API_KEY="twoj-klucz"
-export OPENAI_API_KEY="twoj-klucz-openai"
+POSTIZ_MCP_URL=https://twoja-instancja/api/mcp/twoj-klucz
+POSTIZ_API_KEY=twoj-klucz
+OPENAI_API_KEY=klucz-openai
 ```
 
 ### Uruchomienie
 
 ```bash
+cd ContentForge
 source venv/bin/activate
 python main.py
 ```
@@ -68,73 +49,108 @@ Każda mechanika generuje treść na **4 platformy naraz**:
 5. Skopiuj prompt → wklej do Claude → skopiuj odpowiedź → wklej do ContentForge
 6. System generuje prompt formatowania dla każdej z 4 platform
 7. Dla każdej platformy: skopiuj prompt → Claude → wklej odpowiedź
-8. Treści zapisane w bazie danych
-9. (Opcjonalnie) Dodaj obraz — menu 5
-10. (Opcjonalnie) Opublikuj / zaplanuj — menu 4
+8. Treści zapisane w bazie danych ze statusem "szkic"
 ```
 
 ---
 
-## 4. Obrazy (opcjonalnie)
+## 4. Zatwierdzanie treści
 
-Menu główne → **5 — Zarządzaj obrazami**
+Menu główne → **4 — Przeglądaj i zatwierdzaj treści**
 
-| Opcja | Opis |
-|-------|------|
-| **DALL-E** | System sugeruje prompt na podstawie treści → potwierdzasz/edytujesz → obraz generowany automatycznie |
-| **Plik lokalny** | Wskazujesz plik z dysku (PNG, JPG, WEBP, GIF, BMP, max 20 MB) → kopiowany do `data/images/` |
+### Statusy
 
-Obrazy są automatycznie uploadowane do Postiz przy publikacji.
+| Status | Znaczenie |
+|--------|-----------|
+| Szkic | Nowo wygenerowana, czeka na przegląd |
+| Zatwierdzony | Gotowa do publikacji |
+| Odrzucony | Do poprawy lub pominięcia |
+| Opublikowany | Opublikowana (Postiz lub ręcznie) |
+
+### Opcje
+
+- Przeglądaj szkice / zatwierdzone / odrzucone / z sesji
+- Przejrzyj jedna po drugiej (a = zatwierdź, r = odrzuć, s = pomiń, q = zakończ)
+- Zmień status konkretnej treści po ID
+- Zatwierdź wszystkie szkice hurtowo
+
+**Publikować można wyłącznie zatwierdzone treści.**
 
 ---
 
-## 5. Publikacja przez Postiz
+## 5. Publikacja przez Postiz (MCP)
 
-Menu główne → **4 — Publikuj treść**
+Menu główne → **5 — Publikuj treść (Postiz)**
 
 ### Kroki:
 
-1. Wybierz sesję (lista ostatnich 10)
-2. Wybierz treść (LinkedIn / Twitter / Blog / Medium)
-3. Wybierz integrację (kanał w Postiz)
-4. Wybierz typ publikacji:
-   - **Teraz** — natychmiastowa publikacja
-   - **Zaplanuj** — system sugeruje optymalne godziny per platforma
-   - **Szkic** — zapisz w Postiz jako draft
-5. Potwierdź → post wysłany
+1. System pokazuje tylko zatwierdzone treści
+2. Wybierasz treść do publikacji
+3. Wybierasz integrację (kanał w Postiz)
+4. System pobiera wymagane ustawienia platformy
+5. Wybierasz typ: teraz / zaplanuj / szkic
+6. Potwierdzasz → post wysłany, treść oznaczona jako opublikowana
 
-### Sugerowane optymalne godziny (per platforma):
+### Sugerowane optymalne godziny:
 
-| Platforma | Najlepsze godziny | Najlepsze dni |
-|-----------|-------------------|---------------|
-| LinkedIn  | 8:00, 12:00, 17:30 | Pon–Czw |
+| Platforma | Godziny | Dni |
+|-----------|---------|-----|
+| LinkedIn | 8:00, 12:00, 17:30 | Pon–Czw |
 | X/Twitter | 9:00, 12:00, 18:00, 21:00 | Pon–Pt |
-| Blog      | 7:00, 10:00, 14:00 | Pon–Śr |
-| Medium    | 8:00, 11:00, 20:00 | Wt–Czw |
+| Blog | 7:00, 10:00, 14:00 | Pon–Śr |
+| Medium | 8:00, 11:00, 20:00 | Wt–Czw |
 
-### Formaty daty przy planowaniu:
+### Formaty daty:
 
 ```
 jutro 10:00
 pojutrze 14:30
 za 2 godziny
-2025-03-15 09:00
-15 marca 10:00
+2026-03-15 09:00
 ```
-
-### Rate limit: 30 żądań/godzinę (~5 pełnych sesji publikacji/h)
 
 ---
 
-## 6. Plan na miesiąc (20 dni roboczych)
+## 6. Ręczna publikacja
 
-### Matematyka:
+Menu główne → **6 — Publikuj ręcznie (Quora, inne)**
 
-> **20 sesji × 4 formaty = 80 treści**
->
-> 20× LinkedIn, 20× Twitter, 20× Blog, 20× Medium
+Dla platform poza Postiz:
 
-### Sugerowana strategia tygodniowa:
+1. Wyświetla zatwierdzone treści
+2. Pokazuje pełną treść do skopiowania
+3. Kopiujesz i wklejasz na Quorę / newsletter / Reddit / gdziekolwiek
+4. Podajesz nazwę platformy
+5. Treść oznaczona jako opublikowana z logiem
+
+---
+
+## 7. Obrazy
+
+Menu główne → **7 — Zarządzaj obrazami**
+
+| Opcja | Opis |
+|-------|------|
+| **DALL-E** | System sugeruje prompt → potwierdzasz/edytujesz → obraz wygenerowany automatycznie |
+| **Plik lokalny** | Wskazujesz plik z dysku (PNG, JPG, WEBP, GIF, BMP, max 20 MB) |
+| **Postiz AI** | Generowanie obrazu podczas publikacji (menu 5) |
+
+---
+
+## 8. Historia i logi
+
+| Menu | Co pokazuje |
+|------|-------------|
+| **8 — Historia sesji** | Lista sesji, podgląd treści ze statusami, pełna treść z formatowaniem |
+| **9 — Log publikacji** | Wszystkie publikacje: status, integracja (Postiz/ręczna), data, typ |
+
+---
+
+## 9. Plan na miesiąc (20 dni roboczych)
+
+> **20 sesji x 4 formaty = 80 treści**
+
+### Strategia tygodniowa:
 
 | Dzień | Mechanika | Cel |
 |-------|-----------|-----|
@@ -144,58 +160,17 @@ za 2 godziny
 | Czwartek | Keyword (1) | Post ekspercki — budowanie autorytetu |
 | Piątek | Trend (2) | Podsumowanie tygodnia w branży |
 
-### Przykładowy harmonogram marca:
-
-| Tydzień | Pon 🔥 | Wt 🔑 | Śr 💡 | Czw 🔑 | Pt 🔥 |
-|---------|--------|--------|--------|---------|--------|
-| 1 (3–7) | Trend w AI | SEO: automatyzacja | Temat: praca zdalna | SEO: produktywność | Trend: social media |
-| 2 (10–14) | Trend w branży | SEO: content marketing | Temat: personal branding | SEO: copywriting | Trend: technologie |
-| 3 (17–21) | Trend w ecommerce | SEO: email marketing | Temat: storytelling | SEO: analytics | Trend: startup |
-| 4 (24–28) | Trend w SaaS | SEO: lead generation | Temat: kreatywność | SEO: social selling | Trend: podsumowanie |
-
 ---
 
-## 7. Historia i przegląd
-
-| Menu | Co pokazuje |
-|------|-------------|
-| **6 — Historia sesji** | Lista wszystkich sesji, podgląd treści, pełna treść z formatowaniem |
-| **7 — Log publikacji** | Wszystkie publikacje: status, integracja, data, typ |
-
----
-
-## 8. Struktura plików
-
-```
-ContentForge/
-├── main.py              ← uruchamiasz to
-├── config.yaml          ← twoje klucze API (gitignored)
-├── data/
-│   ├── contentforge.db  ← baza SQLite (gitignored)
-│   └── images/          ← obrazy (gitignored)
-└── venv/                ← środowisko Python
-```
-
----
-
-## 9. Szybki start — pierwsza sesja
+## 10. Szybki start
 
 ```bash
-# 1. Wejdź do projektu
 cd ContentForge
 source venv/bin/activate
-
-# 2. Skonfiguruj (jednorazowo)
-cp config.yaml.example config.yaml
-# edytuj config.yaml — dodaj klucze API
-
-# 3. Uruchom
 python main.py
 
-# 4. Wybierz: 1 (słowo kluczowe)
-# 5. Wpisz: "content marketing"
-# 6. Skopiuj wygenerowany prompt do Claude
-# 7. Wklej odpowiedź Claude do ContentForge
-# 8. Powtórz dla 4 platform
-# 9. Gotowe — treści w bazie!
+# Menu: 1 (słowo kluczowe) → wpisz keyword → skopiuj prompt do Claude
+# → wklej odpowiedź → powtórz dla 4 platform
+# Menu: 4 (zatwierdź) → przejrzyj i zatwierdź treści
+# Menu: 5 (Postiz) lub 6 (ręcznie) → opublikuj
 ```
