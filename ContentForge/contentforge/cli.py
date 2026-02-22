@@ -88,13 +88,14 @@ class ContentForgeCLI:
             console.print("  [cyan]3[/cyan] — Generuj treść z ogólnego tematu")
             console.print("  [cyan]4[/cyan] — Przeglądaj i zatwierdzaj treści")
             console.print("  [cyan]5[/cyan] — Publikuj treść (Postiz)")
-            console.print("  [cyan]6[/cyan] — Zarządzaj obrazami")
-            console.print("  [cyan]7[/cyan] — Historia sesji")
-            console.print("  [cyan]8[/cyan] — Log publikacji")
+            console.print("  [cyan]6[/cyan] — Publikuj ręcznie (Quora, inne)")
+            console.print("  [cyan]7[/cyan] — Zarządzaj obrazami")
+            console.print("  [cyan]8[/cyan] — Historia sesji")
+            console.print("  [cyan]9[/cyan] — Log publikacji")
             console.print("  [cyan]0[/cyan] — Wyjście")
             console.print()
 
-            choice = Prompt.ask("Wybierz opcję", choices=["0", "1", "2", "3", "4", "5", "6", "7", "8"], default="0")
+            choice = Prompt.ask("Wybierz opcję", choices=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], default="0")
 
             try:
                 if choice == "1":
@@ -108,10 +109,12 @@ class ContentForgeCLI:
                 elif choice == "5":
                     self._publish_flow()
                 elif choice == "6":
-                    self._images_menu()
+                    self._manual_publish_flow()
                 elif choice == "7":
-                    self._show_history()
+                    self._images_menu()
                 elif choice == "8":
+                    self._show_history()
+                elif choice == "9":
                     self._show_publish_log()
                 elif choice == "0":
                     console.print("[dim]Do zobaczenia![/dim]")
@@ -558,6 +561,61 @@ class ContentForgeCLI:
             )
             self.db.save_publish(record)
             console.print(f"[red]Błąd publikacji: {e}[/red]")
+
+    # === Ręczna publikacja ===
+
+    def _manual_publish_flow(self):
+        console.print(Panel("[bold]Ręczna publikacja (Quora, newsletter, inne)[/bold]", border_style="yellow"))
+
+        approved = self.db.get_approved_contents()
+        if not approved:
+            console.print("[yellow]Brak zatwierdzonych treści. Najpierw zatwierdź treści w menu 4.[/yellow]")
+            return
+
+        console.print("\n[bold green]Zatwierdzone treści:[/bold green]")
+        self._display_contents_table(approved)
+
+        content_id = IntPrompt.ask("Podaj ID treści")
+
+        content = self.db.get_content(content_id)
+        if not content:
+            console.print("[red]Nie znaleziono treści.[/red]")
+            return
+
+        if content.status != ContentStatus.APPROVED:
+            status_label, _ = STATUS_STYLES.get(content.status, ("[dim]?[/dim]", "dim"))
+            console.print(f"[red]Treść #{content_id} ma status: {status_label} — można publikować tylko zatwierdzone.[/red]")
+            return
+
+        # Wyświetl pełną treść do skopiowania
+        label = PLATFORM_LABELS.get(content.platform, content.platform.value)
+        console.print(f"\n{'='*60}")
+        console.print(Panel(
+            Markdown(content.body),
+            title=f"{content.title} ({label})",
+            subtitle=content.hashtags,
+            border_style="cyan",
+        ))
+        console.print(f"{'='*60}")
+        console.print(f"\n[dim]Skopiuj treść powyżej i wklej na docelową platformę.[/dim]")
+
+        # Zapytaj gdzie opublikowano
+        platform_name = Prompt.ask("\nGdzie opublikowałeś? (np. Quora, Newsletter, Reddit, inne)")
+
+        if Confirm.ask(f"Oznaczyć treść #{content_id} jako opublikowaną na {platform_name}?", default=True):
+            record = PublishRecord(
+                content_id=content.id,
+                integration_id="manual",
+                integration_name=f"Ręcznie: {platform_name}",
+                publish_type=PublishType.NOW,
+                status="success",
+                response_data=json.dumps({"platform": platform_name, "method": "manual"}, ensure_ascii=False),
+            )
+            self.db.save_publish(record)
+            self.db.update_content_status(content.id, ContentStatus.PUBLISHED)
+            console.print(f"[bold green]Oznaczono jako opublikowane na {platform_name}![/bold green]")
+        else:
+            console.print("[dim]Treść pozostaje jako zatwierdzona — możesz wrócić tu później.[/dim]")
 
     # === Obrazy ===
 
